@@ -40,8 +40,8 @@ declare global {
   var __piWebSharedModelRuntime: SharedModelRuntime | undefined;
 }
 
-// Pi Web's own plugin changes and reloads invalidate the entry, so the TTL is
-// only a backstop for changes made outside Pi Web: `pi install` from a
+// 锋矢's own plugin changes and reloads invalidate the entry, so the TTL is
+// only a backstop for changes made outside 锋矢: `pi install` from a
 // terminal, an edited extension file.
 const SHARED_MODEL_RUNTIME_TTL_MS = 10 * 60_000;
 const REFRESH_QUEUE_KEY: symbol = Symbol.for("pi-web:shared-model-runtime-refresh");
@@ -57,7 +57,7 @@ const REFRESH_QUEUE_KEY: symbol = Symbol.for("pi-web:shared-model-runtime-refres
  * it does. Only the extension registrations are reused: each call refreshes
  * the runtime offline, which reads models.json, auth.json and
  * models-store.json again, so auth status is as fresh as a new runtime's.
- * Extensions changed outside Pi Web show once the entry expires; Pi Web's own
+ * Extensions changed outside 锋矢 show once the entry expires; 锋矢's own
  * plugin changes and reloads call `invalidateModelRuntimeWithExtensions()`.
  */
 export async function getModelRuntimeWithExtensions(): Promise<ModelRuntime> {

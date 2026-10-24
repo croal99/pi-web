@@ -1871,7 +1871,7 @@ pre, code {
 }
 
 /* The empty new-session page's header above the composer (ChatWindow), on
-   the composer's left edge: the brand (the logo, "Pi Web" and its versions
+   the composer's left edge: the brand (the logo, "锋矢" and its versions
    line), then the project and worktree row (NewSessionContextBar) right
    above the composer card. Nothing on the right. */
 .new-session-hero-inner {
@@ -1888,8 +1888,9 @@ pre, code {
 
 .new-session-logo {
   flex: none;
-  width: 40px;
-  height: 40px;
+  height: 42px;
+  width: auto;
+  aspect-ratio: 1 / 1;
 }
 
 .new-session-brand-text {
@@ -1982,8 +1983,9 @@ pre, code {
   }
 
   .new-session-logo {
-    width: 32px;
-    height: 32px;
+    height: 40px;
+    width: auto;
+    aspect-ratio: 1 / 1;
   }
 
   .new-session-brand-name {
