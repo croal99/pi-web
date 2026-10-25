@@ -22,7 +22,7 @@ export function getSupportedLocales(): string[] {
 /**
  * 将浏览器语言列表解析为 锋矢 内置语言。
  * @param languages 浏览器按优先级排列的语言列表
- * @returns 匹配的内置语言，无法匹配时返回英语
+ * @returns 匹配的内置语言，无法匹配时返回简体中文
  */
 export function resolveBrowserLocale(languages: readonly string[]): Locale {
   for (const language of languages) {
@@ -37,5 +37,5 @@ export function resolveBrowserLocale(languages: readonly string[]): Locale {
       || normalized === "zh-hant" || normalized.startsWith("zh-hant-")) return "zh-TW";
     if (normalized.startsWith("zh-")) return "zh-CN";
   }
-  return "en";
+  return "zh-CN";
 }

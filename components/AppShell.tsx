@@ -21,6 +21,7 @@ import { TerminalPanel } from "./TerminalPanel";
 import { newTerminalTab, restoreTerminalTabs, TERMINAL_TABS_KEY, type TerminalTab } from "./terminal-tab-state";
 import { useTheme } from "@/hooks/useTheme";
 import { useFontPreferences } from "@/hooks/useFontPreferences";
+import { useDevToolsEnabled } from "@/hooks/useDevToolsEnabled";
 import { useI18n } from "@/hooks/useI18n";
 import { useIsMobile, useIsNarrowMobile } from "@/hooks/useIsMobile";
 import { useViewportHeight } from "@/hooks/useViewportHeight";
@@ -110,6 +111,7 @@ export function AppShell() {
   const { locale, t: translate } = useI18n();
   const isMobile = useIsMobile();
   const isNarrowMobile = useIsNarrowMobile();
+  const devToolsEnabled = useDevToolsEnabled();
   useViewportHeight();
 
   // Once the user has granted notification permission, register a Web Push
@@ -1557,6 +1559,8 @@ export function AppShell() {
 
   const renderChatToolbarActions = (mobile: boolean) => {
     if (!mobile && !showChat) return null;
+    if (!devToolsEnabled) return null;  // 控制工具栏显示
+
     return (
       <div style={{ display: "flex", alignItems: "stretch", height: "100%" }}>
         <button
@@ -2274,7 +2278,7 @@ export function AppShell() {
                   )}
                 </button>
               )}
-              {!isNarrowMobile && renderChatToolbarActions(true)}
+              {!isNarrowMobile && devToolsEnabled && renderChatToolbarActions(true)}
               {renderSessionStatsButton(true)}
               {renderMainFileToggle(true)}
               {isNarrowMobile && mobileToolbarMoreOpen && (
@@ -2354,7 +2358,7 @@ export function AppShell() {
                   translate={translate}
                 />
               )}
-              {activeTopPanel === "tools" && (
+              {devToolsEnabled && activeTopPanel === "tools" && (
                 <ToolDefinitionsPanel
                   loading={systemInfoLoading}
                   tools={systemTools}
