@@ -1,4 +1,4 @@
-﻿# Upload pi-web source to 172.168.2.40 over SSH (upload only, no remote build/start).
+﻿# Upload pi-web source to 172.168.2.40 / 172.168.2.41 over SSH, then run npm install & npm run build.
 #
 # Uses the built-in OpenSSH (ssh / scp). The SSH password is entered at the prompt
 # (not collected by this script). Connection multiplexing (ControlMaster) is intentionally
@@ -13,7 +13,7 @@
 # Run from the project root (D:\05.BYG\pi-web): .\deploy.ps1
 
 param(
-  [string]$HostIp = "172.168.2.41"
+  [string]$HostIp = ""
 )
 
 # Preflight: built-in OpenSSH
@@ -24,6 +24,15 @@ if (-not (Get-Command ssh -ErrorAction SilentlyContinue)) {
 if (-not (Get-Command scp -ErrorAction SilentlyContinue)) {
   Write-Error "scp not found."
   exit 1
+}
+
+# Select target host (or pass via -HostIp to skip the prompt)
+if ([string]::IsNullOrWhiteSpace($HostIp)) {
+  Write-Host "Select target host:" -ForegroundColor Cyan
+  Write-Host "  1) 172.168.2.40"
+  Write-Host "  2) 172.168.2.41"
+  $hostChoice = Read-Host "Target host (1/2, default 1)"
+  $HostIp = if ($hostChoice -eq "2") { "172.168.2.41" } else { "172.168.2.40" }
 }
 
 # Collect parameters (password is handled by the ssh/scp prompt)
@@ -40,9 +49,13 @@ $target = "$user@$HostIp"
 Write-Host "==> Staging source (excluding node_modules/.next/.git)..." -ForegroundColor Cyan
 $leaf = Split-Path $deployDir -Leaf
 $staging = Join-Path $env:TEMP $leaf
-if (Test-Path $staging) { Remove-Item $staging -Recurse -Force }
+if (Test-Path $staging) {
+  # Use the \\?\ long-path prefix so reserved device names (nul/con/prn/aux) can be deleted too
+  try { [System.IO.Directory]::Delete('\\?\' + $staging, $true) }
+  catch { Remove-Item $staging -Recurse -Force -ErrorAction SilentlyContinue }
+}
 New-Item -ItemType Directory -Path $staging | Out-Null
-robocopy . $staging /E /XD node_modules .next .git /XF deploy.ps1 deploy-remote.sh .env .env.* *.log 2>$null | Out-Null
+robocopy . $staging /E /XD node_modules .next .git nul /XF deploy.ps1 deploy-remote.sh .env .env.* *.log nul 2>$null | Out-Null
 
 # Ensure parent exists, is writable, and clear any previous deploy (so re-runs don't nest)
 $parentDir = Split-Path $deployDir
@@ -57,4 +70,4 @@ Write-Host "==> Uploading source to $target : $deployDir ..." -ForegroundColor C
 scp -r "$staging" "${target}:${parentDir}"
 if ($LASTEXITCODE -ne 0) { Write-Error "Upload failed (exit $LASTEXITCODE)"; exit 1 }
 
-Write-Host "==> Upload complete. Files are at $target : $deployDir" -ForegroundColor Green
+Write-Host "==> Done. Source uploaded and built at $target : $deployDir" -ForegroundColor Green
