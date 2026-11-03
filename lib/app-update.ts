@@ -10,6 +10,9 @@ function parseStableVersion(version: string): [number, number, number] | null {
 }
 
 export function isNewerStableVersion(candidate: string, current: string): boolean {
+  // Only perform the update check in debug (non-production) mode.
+  if (process.env.NODE_ENV !== "production") return false;
+
   const candidateParts = parseStableVersion(candidate);
   const currentParts = parseStableVersion(current);
   if (!candidateParts || !currentParts) return false;
