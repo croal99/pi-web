@@ -18,7 +18,6 @@ export const metadata: Metadata = {
   title: "锋矢",
   description: "锋矢 interface for the pi coding agent",
   applicationName: "锋矢",
-  manifest: "/manifest.webmanifest",
   icons: {
     icon: [
       {
@@ -64,6 +63,7 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" translate="no" className={`${notoSansMono.variable} notranslate`} suppressHydrationWarning>
       <head>
+        <link rel="manifest" href="/manifest.webmanifest" crossOrigin="use-credentials" />
         <meta name="google" content="notranslate" />
         <script
           dangerouslySetInnerHTML={{
