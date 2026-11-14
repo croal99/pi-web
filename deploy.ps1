@@ -70,4 +70,12 @@ Write-Host "==> Uploading source to $target : $deployDir ..." -ForegroundColor C
 scp -r "$staging" "${target}:${parentDir}"
 if ($LASTEXITCODE -ne 0) { Write-Error "Upload failed (exit $LASTEXITCODE)"; exit 1 }
 
-Write-Host "==> Done. Source uploaded and built at $target : $deployDir" -ForegroundColor Green
+Write-Host "==> Done. Source uploaded to $target : $deployDir" -ForegroundColor Green
+
+Write-Host "`nNext steps on the server (run in your own ssh session, where nvm is loaded):" -ForegroundColor Cyan
+Write-Host "  cd $deployDir" -ForegroundColor White
+Write-Host "  npm install" -ForegroundColor White
+Write-Host "  npm run build" -ForegroundColor White
+Write-Host "  pm2 start ecosystem.config.js    # serves on port 80 (needs node bind cap or run as root)" -ForegroundColor White
+Write-Host "`nOr run directly without pm2:" -ForegroundColor Cyan
+Write-Host "  npm start    # = next start -H 0.0.0.0 -p 80" -ForegroundColor White
